@@ -56,9 +56,9 @@ function LandingPage({ navigateTo }) {
               >
                 Start Converting Videos
               </button>
-              <button className="px-8 py-4 bg-white text-[#9400d3] rounded-lg hover:shadow-lg transition-all font-medium text-lg border-2 border-[#d7bfd7]">
+              {/* <button className="px-8 py-4 bg-white text-[#9400d3] rounded-lg hover:shadow-lg transition-all font-medium text-lg border-2 border-[#d7bfd7]">
                 Watch Demo
-              </button>
+              </button> */}
             </div>
           </div>
 
