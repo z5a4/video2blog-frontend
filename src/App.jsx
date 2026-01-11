@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Analytics } from "@vercel/analytics/react";
 import LandingPage from "./components/LandingPage";
 import SignupPage from "./components/SignupPage";
 import LoginPage from "./components/LoginPage";
@@ -39,7 +40,9 @@ function App() {
     }
   };
 
-  return <div className="min-h-screen">{renderPage()}</div>;
+  return <div className="min-h-screen">{renderPage()}
+  <Analytics />
+  </div>;
 }
 
 export default App;
