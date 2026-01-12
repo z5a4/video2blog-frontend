@@ -199,10 +199,20 @@ function LandingPage({ navigateTo }) {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="text-center">
               <div className="bg-gradient-to-br from-[#9400d3] to-[#ee80e9] w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold">
                 1
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Add Your Groq Cloud API Key</h3>
+              <p className="text-gray-700">
+                Connect your Groq Cloud account by adding your Access Token once.
+              </p>
+            </div>
+            
+            <div className="text-center">
+              <div className="bg-gradient-to-br from-[#9400d3] to-[#ee80e9] w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold">
+                2
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">Add Your Hashnode PAT</h3>
               <p className="text-gray-700">
