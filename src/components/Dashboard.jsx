@@ -5,12 +5,10 @@ import {
   LogOut,
   FileText,
   Settings,
-  Home,
   CheckCircle,
   AlertCircle,
   Upload,
   Calendar,
-  Link,
   Video,
   FileUp,
   Key,
@@ -34,10 +32,11 @@ import {
   Lock,
   FileVideo,
   ArrowRight,
-  ArrowDown
+  ArrowDown,
+  Loader2
 } from "lucide-react";
 
-// Toast Component
+// Toast Component (unchanged)
 const Toast = ({ message, type, onClose }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -68,7 +67,7 @@ const Toast = ({ message, type, onClose }) => {
   );
 };
 
-// Info Card Component
+// Info Card Component (unchanged)
 const InfoCard = ({ icon: Icon, title, description, gradient = "from-[#9400d3] to-[#ee80e9]" }) => (
   <div className="glass-card rounded-xl p-4 border-l-4 border-[#9400d3] hover-lift">
     <div className="flex items-start gap-3">
@@ -83,7 +82,7 @@ const InfoCard = ({ icon: Icon, title, description, gradient = "from-[#9400d3] t
   </div>
 );
 
-// Rule Item Component
+// Rule Item Component (unchanged)
 const RuleItem = ({ icon: Icon, text, type = "info" }) => {
   const colors = {
     info: "text-[#9400d3] bg-[#f8f5ff]",
@@ -100,9 +99,171 @@ const RuleItem = ({ icon: Icon, text, type = "info" }) => {
   );
 };
 
+// Fun Facts Component (NEW)
+const FunFacts = () => {
+  const facts = [
+    "Did you know? The average blog post takes 3-4 hours to write manually.",
+    "Our AI can transcribe speech at 99% accuracy using Whisper technology.",
+    "Your video's audio is processed locally and never stored permanently.",
+    "The generated article is optimized for SEO and readability.",
+    "Hashnode drafts can be edited further before publishing live."
+  ];
+  
+  const [currentFact, setCurrentFact] = useState(0);
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentFact((prev) => (prev + 1) % facts.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [facts.length]);
+  
+  return (
+    <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-100">
+      <div className="flex items-center gap-2 text-purple-700 mb-2">
+        <Sparkles className="w-5 h-5" />
+        <span className="font-medium">Did You Know?</span>
+      </div>
+      <div className="h-12 overflow-hidden">
+        <div 
+          className="transition-transform duration-500 ease-in-out"
+          style={{ transform: `translateY(-${currentFact * 48}px)` }}
+        >
+          {facts.map((fact, index) => (
+            <div key={index} className="h-12 flex items-center">
+              <p className="text-sm text-gray-700">{fact}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="flex justify-center gap-1 mt-3">
+        {facts.map((_, index) => (
+          <div
+            key={index}
+            className={`w-1.5 h-1.5 rounded-full transition-all ${
+              index === currentFact
+                ? "bg-purple-600 w-4"
+                : "bg-purple-300"
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Processing Progress Component (NEW)
+// Processing Progress Component (UPDATED - No scrolling)
+const ProcessingProgress = ({ processingStep, processingSteps, estimatedTime }) => (
+  <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div className="bg-white rounded-2xl p-8 max-w-2xl w-full shadow-2xl">
+      <div className="text-center">
+        {/* Animated Logo - Made smaller */}
+        <div className="relative mx-auto mb-4">
+          <div className="absolute inset-0 bg-gradient-to-r from-[#9400d3] to-[#ee80e9] rounded-full blur-xl opacity-50"></div>
+          <div className="relative bg-gradient-to-r from-[#9400d3] to-[#ee80e9] w-16 h-16 rounded-full flex items-center justify-center mx-auto">
+            <Sparkles className="text-white w-8 h-8 animate-pulse" />
+          </div>
+        </div>
+
+        <h3 className="text-xl font-bold text-gray-800 mb-1">Processing Your Video</h3>
+        <p className="text-sm text-gray-600 mb-4">This usually takes 15-20 seconds. Please wait...</p>
+
+        {/* Progress Steps Grid - More compact */}
+        <div className="grid grid-cols-2 gap-2 mb-4">
+          {processingSteps.map((step, index) => {
+            const StepIcon = step.icon;
+            const isActive = index <= processingStep;
+            const isCurrent = index === processingStep;
+
+            return (
+              <div
+                key={index}
+                className={`flex items-center gap-2 p-2 rounded-lg transition-all duration-300 ${
+                  isActive
+                    ? "bg-gradient-to-r from-[#9400d3]/10 to-[#ee80e9]/10 border border-[#9400d3]/20"
+                    : "bg-gray-50"
+                }`}
+              >
+                <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${
+                  isActive
+                    ? "bg-gradient-to-r from-[#9400d3] to-[#ee80e9] text-white"
+                    : "bg-gray-200 text-gray-400"
+                }`}>
+                  {isCurrent ? (
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                  ) : isActive ? (
+                    <Check className="w-3 h-3" />
+                  ) : (
+                    <StepIcon className="w-3 h-3" />
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between">
+                    <span className={`font-medium text-xs ${isActive ? "text-gray-800" : "text-gray-400"} truncate`}>
+                      {step.label}
+                    </span>
+                    {isActive && (
+                      <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-gradient-to-r from-[#9400d3] to-[#ee80e9] text-white ml-1 shrink-0">
+                        {index === processingStep ? "..." : "✓"}
+                      </span>
+                    )}
+                  </div>
+                  {isCurrent && (
+                    <div className="mt-1 h-0.5 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-[#9400d3] to-[#ee80e9] animate-pulse"></div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Estimated Time - Made smaller */}
+        <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-3 mb-4">
+          <div className="flex items-center justify-center gap-2 text-blue-700 mb-1">
+            <Timer className="w-4 h-4" />
+            <span className="text-sm font-medium">Estimated Time Remaining</span>
+          </div>
+          <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            {estimatedTime}s
+          </div>
+          <p className="text-xs text-gray-600 mt-1">
+            Depending on video length and AI processing speed
+          </p>
+        </div>
+
+        {/* While You Wait Section - Made smaller */}
+        <div className="bg-gray-50 rounded-xl p-3">
+          <p className="text-xs text-gray-600 italic mb-1">
+            <span className="font-medium text-[#9400d3]">While you wait:</span>
+          </p>
+          <ul className="text-[11px] text-gray-500 space-y-0.5">
+            <li className="flex items-center gap-1">
+              <div className="w-1 h-1 bg-[#9400d3] rounded-full"></div>
+              AI is extracting audio from your video
+            </li>
+            <li className="flex items-center gap-1">
+              <div className="w-1 h-1 bg-[#9400d3] rounded-full"></div>
+              Converting speech to text with Whisper AI
+            </li>
+            <li className="flex items-center gap-1">
+              <div className="w-1 h-1 bg-[#9400d3] rounded-full"></div>
+              Generating engaging content with GPT
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 function Dashboard({ token, onLogout }) {
   const [hashnodePAT, setHashnodePAT] = useState("");
   const [isPATSaved, setIsPATSaved] = useState(false);
+  const [groqApiKey, setGroqApiKey] = useState("");
+  const [isGroqKeySaved, setIsGroqKeySaved] = useState(false);
   const [videoFile, setVideoFile] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processedVideos, setProcessedVideos] = useState([]);
@@ -113,6 +274,16 @@ function Dashboard({ token, onLogout }) {
     monthlyLimit: 120,
     dailyCount: 0
   });
+
+  // NEW: Processing states
+  const [processingStep, setProcessingStep] = useState(0);
+  const [processingSteps] = useState([
+    { label: "Uploading Video", icon: Upload },
+    { label: "Extracting Audio", icon: MessageSquare },
+    { label: "Transcribing Content", icon: BookOpen },
+    { label: "Generating Article", icon: FileCode },
+    { label: "Publishing to Hashnode", icon: Hash }
+  ]);
 
   const showToast = (message, type = "info") => {
     setToast({ message, type });
@@ -125,8 +296,11 @@ function Dashboard({ token, onLogout }) {
         `${import.meta.env.VITE_API_URL}/user/me`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      if (res.data.hashnodeToken) {
+      if (res.data.hasHashnode) {
         setIsPATSaved(true);
+      }
+      if (res.data.hasGroqApiKey) {
+        setIsGroqKeySaved(true);
       }
       setUserInfo({
         monthlyMinutesUsed: res.data.monthlyMinutesUsed || 0,
@@ -155,8 +329,35 @@ function Dashboard({ token, onLogout }) {
       setHashnodePAT("");
       fetchUserInfo();
       showToast("Hashnode PAT saved successfully!", "success");
-    } catch {
-      showToast("Failed to save PAT. Please try again.", "error");
+    } catch (err) {
+      showToast(
+        err.response?.data?.error || "Failed to save PAT. Please try again.", 
+        "error"
+      );
+    }
+  };
+
+  /* ================= SAVE GROQ API KEY ================= */
+  const handleSaveGroqKey = async (e) => {
+    e.preventDefault();
+    if (!groqApiKey) {
+      showToast("Please enter your GROQ API Key", "warning");
+      return;
+    }
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/user/groq-api-key`,
+        { apiKey: groqApiKey },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setIsGroqKeySaved(true);
+      setGroqApiKey("");
+      showToast("GROQ API Key saved successfully!", "success");
+    } catch (err) {
+      showToast(
+        err.response?.data?.error || "Failed to save GROQ API Key. Please try again.", 
+        "error"
+      );
     }
   };
 
@@ -187,16 +388,34 @@ function Dashboard({ token, onLogout }) {
       showToast("Please save your Hashnode PAT first", "warning");
       return;
     }
+    if (!isGroqKeySaved) {
+      showToast("Please save your GROQ API Key first", "warning");
+      return;
+    }
     if (!videoFile) {
       showToast("Please select a video file", "warning");
       return;
     }
 
     setIsProcessing(true);
-    const formData = new FormData();
-    formData.append("video", videoFile);
-
+    setProcessingStep(0); // Reset progress
+    
+    // Start progress simulation
+    let progressInterval;
     try {
+      progressInterval = setInterval(() => {
+        setProcessingStep(prev => {
+          if (prev >= processingSteps.length - 1) {
+            clearInterval(progressInterval);
+            return prev;
+          }
+          return prev + 1;
+        });
+      }, 3000); // Update step every 3 seconds
+
+      const formData = new FormData();
+      formData.append("video", videoFile);
+
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/convert`,
         formData,
@@ -225,7 +444,9 @@ function Dashboard({ token, onLogout }) {
         "error"
       );
     } finally {
+      if (progressInterval) clearInterval(progressInterval);
       setIsProcessing(false);
+      setProcessingStep(0);
     }
   };
 
@@ -254,6 +475,9 @@ function Dashboard({ token, onLogout }) {
   const usagePercentage = (userInfo.monthlyMinutesUsed / userInfo.monthlyLimit) * 100;
   const remainingMinutes = userInfo.monthlyLimit - userInfo.monthlyMinutesUsed;
 
+  // Calculate estimated time (15-20 seconds minus progress)
+  const estimatedTime = Math.max(1, 20 - processingStep * 4);
+
   /* ================= UI ================= */
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#f2d0f2] via-white to-[#f2d0f2] font-sans">
@@ -263,8 +487,22 @@ function Dashboard({ token, onLogout }) {
           from { transform: translateX(100%); opacity: 0; }
           to { transform: translateX(0); opacity: 1; }
         }
+        @keyframes pulse-subtle {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.7; }
+        }
+        @keyframes slideUp {
+          from { transform: translateY(10px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
         .animate-slideIn {
           animation: slideIn 0.3s ease-out;
+        }
+        .animate-pulse-subtle {
+          animation: pulse-subtle 2s ease-in-out infinite;
+        }
+        .animate-slideUp {
+          animation: slideUp 0.3s ease-out;
         }
         .hover-lift {
           transition: all 0.2s ease;
@@ -298,6 +536,15 @@ function Dashboard({ token, onLogout }) {
         />
       )}
 
+      {/* Processing Progress Modal */}
+      {isProcessing && (
+        <ProcessingProgress 
+          processingStep={processingStep}
+          processingSteps={processingSteps}
+          estimatedTime={estimatedTime}
+        />
+      )}
+
       {/* NAV */}
       <nav className="glass-card sticky top-0 z-40 border-b border-[#e6d5e6] shadow-sm">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
@@ -312,13 +559,26 @@ function Dashboard({ token, onLogout }) {
               <p className="text-xs text-gray-500 font-medium">AI-Powered Video to Blog Converter</p>
             </div>
           </div>
-          <button
-            onClick={onLogout}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-[#9400d3] hover:bg-[#f5f0ff] transition-colors duration-200 font-medium hover-lift"
-          >
-            <LogOut className="w-5 h-5" />
-            <span>Logout</span>
-          </button>
+          <div className="flex items-center gap-4">
+            {/* API Key Status Indicators */}
+            <div className="flex items-center gap-2">
+              <div className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs ${isPATSaved ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
+                <Hash className="w-3 h-3" />
+                <span>{isPATSaved ? 'Hashnode ✓' : 'Hashnode'}</span>
+              </div>
+              <div className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs ${isGroqKeySaved ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
+                <Cpu className="w-3 h-3" />
+                <span>{isGroqKeySaved ? 'GROQ ✓' : 'GROQ'}</span>
+              </div>
+            </div>
+            <button
+              onClick={onLogout}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-[#9400d3] hover:bg-[#f5f0ff] transition-colors duration-200 font-medium hover-lift"
+            >
+              <LogOut className="w-5 h-5" />
+              <span>Logout</span>
+            </button>
+          </div>
         </div>
       </nav>
 
@@ -366,7 +626,7 @@ function Dashboard({ token, onLogout }) {
                 </div>
                 <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                   <div 
-                    className={`h-full progress-bar ${usagePercentage > 80 ? 'animate-pulse' : ''}`}
+                    className={`h-full progress-bar ${usagePercentage > 80 ? 'animate-pulse-subtle' : ''}`}
                     style={{ width: `${Math.min(usagePercentage, 100)}%` }}
                   ></div>
                 </div>
@@ -412,7 +672,7 @@ function Dashboard({ token, onLogout }) {
               <InfoCard
                 icon={Lock}
                 title="Secure Encryption"
-                description="Your Hashnode PAT is encrypted using AES-256-CBC encryption"
+                description="Your API keys are encrypted using AES-256-CBC encryption"
                 gradient="from-emerald-500 to-teal-400"
               />
               <InfoCard
@@ -430,6 +690,7 @@ function Dashboard({ token, onLogout }) {
           {/* SETTINGS TAB */}
           {activeTab === "settings" && (
             <div className="space-y-6">
+              {/* Hashnode Integration Section */}
               <div className="glass-card rounded-2xl p-6 shadow-lg">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="bg-gradient-to-r from-[#9400d3] to-[#ee80e9] p-2 rounded-lg">
@@ -509,6 +770,88 @@ function Dashboard({ token, onLogout }) {
                   </div>
                 )}
               </div>
+
+              {/* GROQ API Key Section */}
+              <div className="glass-card rounded-2xl p-6 shadow-lg">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="bg-gradient-to-r from-[#9400d3] to-[#ee80e9] p-2 rounded-lg">
+                    <Cpu className="text-white w-6 h-6" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-800">GROQ AI Integration</h2>
+                    <p className="text-gray-600">Add your GROQ API Key for AI processing</p>
+                  </div>
+                </div>
+
+                {/* Description Section */}
+                <div className="mb-8 p-4 bg-[#f8f5ff] rounded-xl">
+                  <h3 className="font-bold text-[#9400d3] mb-3 flex items-center gap-2">
+                    <Info className="w-5 h-5" />
+                    How It Works
+                  </h3>
+                  <p className="text-gray-700 mb-3">
+                    Your GROQ API Key is securely encrypted and used to:
+                  </p>
+                  <div className="space-y-2">
+                    <RuleItem icon={MessageSquare} text="Transcribe video audio to text using Whisper AI" />
+                    <RuleItem icon={BookOpen} text="Generate blog articles using GPT models" />
+                    <RuleItem icon={Lock} text="Store encrypted key securely using AES-256-CBC" />
+                    <RuleItem icon={Shield} text="Key is never stored in plain text" type="success" />
+                  </div>
+                </div>
+
+                {!isGroqKeySaved ? (
+                  <form onSubmit={handleSaveGroqKey} className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        GROQ API Key
+                      </label>
+                      <input
+                        type="password"
+                        placeholder="Enter your GROQ API Key"
+                        value={groqApiKey}
+                        onChange={(e) => setGroqApiKey(e.target.value)}
+                        className="w-full px-4 py-3.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#9400d3]/30 focus:border-[#9400d3] outline-none transition-all"
+                      />
+                      <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <div className="flex items-center gap-2 text-blue-800 mb-2">
+                          <AlertCircle className="w-4 h-4" />
+                          <span className="font-medium">How to get your GROQ API Key:</span>
+                        </div>
+                        <ol className="text-sm text-blue-700 space-y-1 ml-6 list-decimal">
+                          <li>Go to <a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer" className="underline">Groq Console</a></li>
+                          <li>Create an account or sign in</li>
+                          <li>Generate a new API key from the API Keys section</li>
+                          <li>Copy the key and paste it above</li>
+                        </ol>
+                      </div>
+                    </div>
+                    <button
+                      type="submit"
+                      className="w-full bg-gradient-to-r from-[#9400d3] to-[#ee80e9] text-white py-3.5 rounded-xl font-medium hover-lift shadow-md hover:shadow-lg transition-all"
+                    >
+                      <div className="flex items-center justify-center gap-2">
+                        <Cpu className="w-5 h-5" />
+                        Save GROQ API Key
+                      </div>
+                    </button>
+                  </form>
+                ) : (
+                  <div className="gradient-border rounded-2xl p-6 text-center">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full mb-4">
+                      <Check className="text-white w-8 h-8" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-800 mb-2">GROQ API Key Saved</h3>
+                    <p className="text-gray-600 mb-4">Your GROQ API Key is securely encrypted and ready for use</p>
+                    <button
+                      onClick={() => setIsGroqKeySaved(false)}
+                      className="px-6 py-2.5 border border-[#9400d3] text-[#9400d3] rounded-lg hover:bg-[#f8f5ff] transition-colors font-medium"
+                    >
+                      Update API Key
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
@@ -527,85 +870,85 @@ function Dashboard({ token, onLogout }) {
                 </div>
 
                 {/* Process Flow Description */}
-<div className="mb-8">
-  <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-    <Zap className="w-5 h-5 text-[#9400d3]" />
-    How Vid2Blog Works
-  </h3>
-  
-  <div className="bg-white rounded-xl p-5 border border-gray-200">
-    {/* Process Steps with Arrows */}
-    <div className="flex flex-col md:flex-row items-center justify-between">
-      
-      {/* Step 1 */}
-      <div className="flex flex-col items-center text-center p-3 w-full md:w-auto">
-        <div className="bg-gradient-to-r from-[#9400d3] to-[#ee80e9] p-3 rounded-full mb-2">
-          <FileVideo className="text-white w-6 h-6" />
-        </div>
-        <h4 className="font-bold text-gray-800 mb-1">Upload Video</h4>
-        <p className="text-xs text-gray-600">MP4, MOV, AVI up to 500MB</p>
-      </div>
-      
-      {/* Arrow */}
-      <div className="hidden md:block text-gray-400 px-4">
-        <ArrowRight className="w-6 h-6" />
-      </div>
-      <div className="md:hidden my-4 text-gray-400">
-        <ArrowDown className="w-6 h-6 mx-auto" />
-      </div>
-      
-      {/* Step 2 */}
-      <div className="flex flex-col items-center text-center p-3 w-full md:w-auto">
-        <div className="bg-gradient-to-r from-[#9400d3] to-[#ee80e9] p-3 rounded-full mb-2">
-          <MessageSquare className="text-white w-6 h-6" />
-        </div>
-        <h4 className="font-bold text-gray-800 mb-1">Extract & Transcribe</h4>
-        <p className="text-xs text-gray-600">FFmpeg + Whisper AI</p>
-      </div>
-      
-      {/* Arrow */}
-      <div className="hidden md:block text-gray-400 px-4">
-        <ArrowRight className="w-6 h-6" />
-      </div>
-      <div className="md:hidden my-4 text-gray-400">
-        <ArrowDown className="w-6 h-6 mx-auto" />
-      </div>
-      
-      {/* Step 3 */}
-      <div className="flex flex-col items-center text-center p-3 w-full md:w-auto">
-        <div className="bg-gradient-to-r from-[#9400d3] to-[#ee80e9] p-3 rounded-full mb-2">
-          <BookOpen className="text-white w-6 h-6" />
-        </div>
-        <h4 className="font-bold text-gray-800 mb-1">Generate Article</h4>
-        <p className="text-xs text-gray-600">GPT creates blog content</p>
-      </div>
-      
-      {/* Arrow */}
-      <div className="hidden md:block text-gray-400 px-4">
-        <ArrowRight className="w-6 h-6" />
-      </div>
-      <div className="md:hidden my-4 text-gray-400">
-        <ArrowDown className="w-6 h-6 mx-auto" />
-      </div>
-      
-      {/* Step 4 */}
-      <div className="flex flex-col items-center text-center p-3 w-full md:w-auto">
-        <div className="bg-gradient-to-r from-[#9400d3] to-[#ee80e9] p-3 rounded-full mb-2">
-          <Hash className="text-white w-6 h-6" />
-        </div>
-        <h4 className="font-bold text-gray-800 mb-1">Publish Draft</h4>
-        <p className="text-xs text-gray-600">To your Hashnode blog</p>
-      </div>
-    </div>
-    
-    {/* Simple description below */}
-    <div className="mt-6 pt-6 border-t border-gray-100">
-      <p className="text-sm text-gray-600 text-center">
-        Upload your video → AI extracts audio → Converts to text → Creates blog article → Publishes to Hashnode
-      </p>
-    </div>
-  </div>
-</div>
+                <div className="mb-8">
+                  <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <Zap className="w-5 h-5 text-[#9400d3]" />
+                    How Vid2Blog Works
+                  </h3>
+                  
+                  <div className="bg-white rounded-xl p-5 border border-gray-200">
+                    {/* Process Steps with Arrows */}
+                    <div className="flex flex-col md:flex-row items-center justify-between">
+                      
+                      {/* Step 1 */}
+                      <div className="flex flex-col items-center text-center p-3 w-full md:w-auto">
+                        <div className="bg-gradient-to-r from-[#9400d3] to-[#ee80e9] p-3 rounded-full mb-2">
+                          <FileVideo className="text-white w-6 h-6" />
+                        </div>
+                        <h4 className="font-bold text-gray-800 mb-1">Upload Video</h4>
+                        <p className="text-xs text-gray-600">MP4, MOV, AVI up to 500MB</p>
+                      </div>
+                      
+                      {/* Arrow */}
+                      <div className="hidden md:block text-gray-400 px-4">
+                        <ArrowRight className="w-6 h-6" />
+                      </div>
+                      <div className="md:hidden my-4 text-gray-400">
+                        <ArrowDown className="w-6 h-6 mx-auto" />
+                      </div>
+                      
+                      {/* Step 2 */}
+                      <div className="flex flex-col items-center text-center p-3 w-full md:w-auto">
+                        <div className="bg-gradient-to-r from-[#9400d3] to-[#ee80e9] p-3 rounded-full mb-2">
+                          <MessageSquare className="text-white w-6 h-6" />
+                        </div>
+                        <h4 className="font-bold text-gray-800 mb-1">Extract & Transcribe</h4>
+                        <p className="text-xs text-gray-600">FFmpeg + Whisper AI</p>
+                      </div>
+                      
+                      {/* Arrow */}
+                      <div className="hidden md:block text-gray-400 px-4">
+                        <ArrowRight className="w-6 h-6" />
+                      </div>
+                      <div className="md:hidden my-4 text-gray-400">
+                        <ArrowDown className="w-6 h-6 mx-auto" />
+                      </div>
+                      
+                      {/* Step 3 */}
+                      <div className="flex flex-col items-center text-center p-3 w-full md:w-auto">
+                        <div className="bg-gradient-to-r from-[#9400d3] to-[#ee80e9] p-3 rounded-full mb-2">
+                          <BookOpen className="text-white w-6 h-6" />
+                        </div>
+                        <h4 className="font-bold text-gray-800 mb-1">Generate Article</h4>
+                        <p className="text-xs text-gray-600">GPT creates blog content</p>
+                      </div>
+                      
+                      {/* Arrow */}
+                      <div className="hidden md:block text-gray-400 px-4">
+                        <ArrowRight className="w-6 h-6" />
+                      </div>
+                      <div className="md:hidden my-4 text-gray-400">
+                        <ArrowDown className="w-6 h-6 mx-auto" />
+                      </div>
+                      
+                      {/* Step 4 */}
+                      <div className="flex flex-col items-center text-center p-3 w-full md:w-auto">
+                        <div className="bg-gradient-to-r from-[#9400d3] to-[#ee80e9] p-3 rounded-full mb-2">
+                          <Hash className="text-white w-6 h-6" />
+                        </div>
+                        <h4 className="font-bold text-gray-800 mb-1">Publish Draft</h4>
+                        <p className="text-xs text-gray-600">To your Hashnode blog</p>
+                      </div>
+                    </div>
+                    
+                    {/* Simple description below */}
+                    <div className="mt-6 pt-6 border-t border-gray-100">
+                      <p className="text-sm text-gray-600 text-center">
+                        Upload your video → AI extracts audio → Converts to text → Creates blog article → Publishes to Hashnode
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
                 {/* Rules and Limitations */}
                 <div className="mb-6 p-4 bg-[#f8f5ff] rounded-xl">
@@ -637,17 +980,54 @@ function Dashboard({ token, onLogout }) {
                   </div>
                 </div>
 
-                {!isPATSaved && (
+                {/* API Keys Required Warning */}
+                {(!isPATSaved || !isGroqKeySaved) && (
                   <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl">
                     <div className="flex items-center gap-2 text-amber-800">
                       <AlertCircle className="w-5 h-5" />
-                      <span className="font-medium">Hashnode PAT Required</span>
+                      <span className="font-medium">API Keys Required</span>
                     </div>
                     <p className="text-sm text-amber-700 mt-1 ml-7">
-                      Please connect your Hashnode account in Settings tab before uploading videos
+                      {!isPATSaved && !isGroqKeySaved 
+                        ? "Please add both Hashnode PAT and GROQ API Key in Settings tab"
+                        : !isPATSaved 
+                          ? "Please connect your Hashnode account in Settings tab"
+                          : "Please add your GROQ API Key in Settings tab"}
                     </p>
                   </div>
                 )}
+
+                {/* Fun Facts Component */}
+                <div className="mb-6">
+                  <FunFacts />
+                </div>
+
+                {/* Processing Time Info */}
+                <div className="mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
+                  <div className="flex items-center gap-2 text-blue-700 mb-2">
+                    <Timer className="w-5 h-5" />
+                    <span className="font-medium">What to Expect:</span>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="bg-white p-3 rounded-lg border border-blue-100">
+                      <div className="text-sm font-medium text-gray-700 mb-1">Processing Time</div>
+                      <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                        15-20s
+                      </div>
+                      <div className="text-xs text-gray-500">Average duration</div>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg border border-blue-100">
+                      <div className="text-sm font-medium text-gray-700 mb-1">AI Steps</div>
+                      <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                        5 Steps
+                      </div>
+                      <div className="text-xs text-gray-500">From upload to publish</div>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-600 mt-3">
+                    <span className="font-medium">Note:</span> Time varies based on video length and AI processing load
+                  </p>
+                </div>
 
                 <form onSubmit={handleVideoUpload} className="space-y-6">
                   <div className="gradient-border rounded-2xl p-8 text-center">
@@ -658,7 +1038,7 @@ function Dashboard({ token, onLogout }) {
                         accept="video/*"
                         onChange={handleFileChange}
                         className="hidden"
-                        disabled={!isPATSaved || usagePercentage >= 100}
+                        disabled={!isPATSaved || !isGroqKeySaved || usagePercentage >= 100 || isProcessing}
                       />
                       <div className="space-y-3">
                         {videoFile ? (
@@ -681,14 +1061,16 @@ function Dashboard({ token, onLogout }) {
                         <button
                           type="button"
                           onClick={() => document.querySelector('input[type="file"]').click()}
-                          disabled={!isPATSaved || usagePercentage >= 100}
+                          disabled={!isPATSaved || !isGroqKeySaved || usagePercentage >= 100 || isProcessing}
                           className={`px-6 py-2.5 rounded-lg font-medium ${
-                            isPATSaved && usagePercentage < 100
+                            isPATSaved && isGroqKeySaved && usagePercentage < 100 && !isProcessing
                               ? 'bg-[#9400d3] text-white hover:bg-[#7a00b3]'
                               : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                           } transition-colors`}
                         >
-                          {usagePercentage >= 100 ? 'Monthly Limit Reached' : 'Choose Video'}
+                          {usagePercentage >= 100 ? 'Monthly Limit Reached' : 
+                           !isPATSaved || !isGroqKeySaved ? 'API Keys Required' :
+                           isProcessing ? 'Processing in Progress' : 'Choose Video'}
                         </button>
                       </div>
                     </label>
@@ -709,9 +1091,9 @@ function Dashboard({ token, onLogout }) {
 
                   <button
                     type="submit"
-                    disabled={!videoFile || !isPATSaved || isProcessing || usagePercentage >= 100}
+                    disabled={!videoFile || !isPATSaved || !isGroqKeySaved || isProcessing || usagePercentage >= 100}
                     className={`w-full py-3.5 rounded-xl font-medium flex items-center justify-center gap-3 transition-all ${
-                      !videoFile || !isPATSaved || isProcessing || usagePercentage >= 100
+                      !videoFile || !isPATSaved || !isGroqKeySaved || isProcessing || usagePercentage >= 100
                         ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                         : 'bg-gradient-to-r from-[#9400d3] to-[#ee80e9] text-white hover-lift shadow-md hover:shadow-lg'
                     }`}
@@ -808,16 +1190,16 @@ function Dashboard({ token, onLogout }) {
                             )}
                           </div>
                           {h.draftUrl && (
-  <a
-    href={h.draftUrl}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="inline-flex items-center gap-2 text-sm text-[#9400d3] hover:text-[#7a00b3] font-medium"
-  >
-    <Eye className="w-4 h-4" />
-    Open Draft on Hashnode
-  </a>
-)}
+                            <a
+                              href={h.draftUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-2 text-sm text-[#9400d3] hover:text-[#7a00b3] font-medium"
+                            >
+                              <Eye className="w-4 h-4" />
+                              Open Draft on Hashnode
+                            </a>
+                          )}
                         </div>
                         <div className="bg-gradient-to-r from-emerald-500 to-teal-400 text-white text-xs font-bold px-3 py-1 rounded-full">
                           Draft
