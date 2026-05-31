@@ -274,6 +274,9 @@ function LandingPage({ navigateTo }) {
           <p className="text-gray-600">
             Transform your tutorial videos into blog posts with AI
           </p>
+          <p className="text-gray-500 text-sm mt-3">
+            A product of <a href="https://zynteqtechnologies.com" target="_blank" rel="noopener noreferrer" className="text-[#9400d3] hover:text-[#ee80e9] font-medium transition-colors">Zynteq Technologies</a>
+          </p>
         </div>
       </footer>
     </div>
