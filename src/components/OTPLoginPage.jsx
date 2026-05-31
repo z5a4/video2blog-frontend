@@ -319,6 +319,9 @@ function OTPLoginPage({ navigateTo, onLogin }) {
             </ul>
           </div>
         </div>
+        <p className="text-center text-sm text-gray-500 mt-6">
+          A product of <a href="https://zynteqtechnologies.com" target="_blank" rel="noopener noreferrer" className="text-[#9400d3] hover:text-[#ee80e9] font-medium transition-colors">Zynteq Technologies</a>
+        </p>
       </div>
     </div>
   );
